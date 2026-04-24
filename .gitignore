@@ -1,0 +1,30 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+.venv/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Kaggle
+.kaggle/
+*.zip
+
+# Large / extracted competition data (keep small samples only if needed)
+data/train.csv
+data/test.csv
+data/train_labels.csv
+data/*.parquet
+data/*.feather
+
+# IDE
+.vscode/
+.idea/
+
+# Generated
+output/
+experiments/eda/output/
+wandb/
+*.log
