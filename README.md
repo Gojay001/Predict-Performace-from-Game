@@ -2,6 +2,12 @@
 
 [Kaggle 竞赛 Overview](https://www.kaggle.com/competitions/predict-student-performance-from-game-play/overview) | [Data](https://www.kaggle.com/competitions/predict-student-performance-from-game-play/data) | [Evaluation](https://www.kaggle.com/competitions/predict-student-performance-from-game-play/overview/evaluation)
 
+## 竞赛成绩
+
+- **赛程**：**2023-02-27** — **2023-06-29**（以 Kaggle 竞赛页为准）。
+- **排名**：**第 197 名** / 共 **2051** 支参赛队伍（约 **Top 10%**）。
+- **奖牌**：**单人铜牌**（Solo Bronze；以 Kaggle 官方榜单与奖牌规则为准）。
+
 ## 任务
 
 基于教育游戏中的 **事件级日志（时序 / 表格）**，预测学生在各题目上的表现（**二分类**：是否答对等；具体标签定义以 [docs/competition-spec.md](docs/competition-spec.md) 与官网为准）。
