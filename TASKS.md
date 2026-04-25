@@ -24,8 +24,9 @@
 | `v1.0-catboost-lb_0.554.ipynb` | 公开 CatBoost inference baseline；Polars 聚合大量 session 级统计特征，按题加载预训练 CatBoost，固定阈值 `0.63` 生成提交 | `0.554` | 已记录 |
 | `v2.0-catboost+nn-lb_0.648.ipynb` | 两套 CatBoost + Event-Aware TConv NN 融合；按题选择单模型或加权融合，`q5/q10` 使用 NN 结果 | `0.648` | 已记录 |
 | `v1.1-catboost-lb_0.699.ipynb` | CatBoost 特征筛选/题目级建模版本；基于 `feature_sort.csv` 构造题目专属时间与计数特征，按 `level_group` 分段推理 | `0.699` | 待进一步复现实验细节 |
+| `v3.0-cat+xgb+mlp-lb_0.699.ipynb` | 在 `v1.1` 题目级特征上训练 CatBoost、XGBoost、MLP 三类模型，并以 `0.92/0.04/0.04` 概率加权融合 | `0.699` | 待验证融合收益 |
 
-**当前最优**：`v1.1-catboost-lb_0.699.ipynb`（Public Score `0.699`）
+**当前最优**：`v1.1-catboost-lb_0.699.ipynb` / `v3.0-cat+xgb+mlp-lb_0.699.ipynb`（Public Score `0.699`）
 
 ---
 
@@ -86,3 +87,16 @@
 - **特征**：基础 session 时间统计、`hover_duration` 聚合、从 `session_id` 解析出的时间特征，以及基于 `feature_sort.csv` 的题目专属事件条件特征。
 - **推理**：对已建模题目按题生成特征并调用对应 CatBoost；部分题目使用默认规则填充；阈值为 `0.63`。
 - **后续**：建议补充本地验证方式、外部输入依赖（如 `/kaggle/input/featur/`）和与 `v2.0` 的可复现实验对比。
+
+### EXP-004: `v3.0-cat+xgb+mlp-lb_0.699.ipynb`
+
+- **Notebook**：[`notebooks/v3.0-cat+xgb+mlp-lb_0.699.ipynb`](notebooks/v3.0-cat+xgb+mlp-lb_0.699.ipynb)
+- **Public Score**：`0.699`
+- **说明**：复制并改造 Vadim Kamaev 的 CatBoost 方案；沿用 `v1.1` 的题目级特征工程与 `feature_sort.csv`，但每道题同时训练 CatBoost、XGBoost、MLP 三个模型。
+- **特征**：继续使用 `d_time`、`delt_time`、`delt_time_next`、`hover_duration`、session 时间特征，以及按题筛选的事件条件特征；相较 `v1.1`，部分题的 `list_kol_f` 数量增加（如 `q4/q6/q10/q14/q16`）。
+- **模型组合**：
+  - CatBoost：`n_estimators=300`、`learning_rate=0.045`、`depth=6`。
+  - XGBoost：`n_estimators=300`、`learning_rate=0.25`、`max_depth=6`，并设置 `gamma/alpha` 正则。
+  - MLP：`hidden_layer_sizes=(60, 30, 10)`、`activation='logistic'`、`solver='sgd'`。
+- **推理**：对已建模题目按 `0.92 * CatBoost + 0.04 * XGBoost + 0.04 * MLP` 融合概率，再用阈值 `0.63` 转为 `correct`；未建模题仍沿用默认规则。
+- **后续**：Public Score 与 `v1.1` 持平，建议在本地按 session 分组验证三模型融合是否稳定优于纯 CatBoost，并尝试按题单独调融合权重。
