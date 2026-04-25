@@ -16,8 +16,7 @@ Thumbs.db
 data/train.csv
 data/test.csv
 data/train_labels.csv
-data/*.parquet
-data/*.feather
+data/jo_*
 
 # IDE
 .vscode/
